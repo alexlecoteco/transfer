@@ -1,0 +1,43 @@
+version: '3'
+volumes:
+  hyperf-redis-data:
+    driver: local
+  hyperf-db-data:
+    driver: local
+services:
+  hyperf-skeleton:
+    container_name: hyperf-skeleton
+    image: hyperf-skeleton
+    build:
+      context: .
+    volumes:
+      - ./:/opt/www
+    ports:
+      - "9501:9501"
+    entrypoint: bash -c "php ./bin/hyperf.php server:watch"
+    environment:
+      - APP_ENV=dev
+      - SCAN_CACHEABLE=false
+  redis:
+    image: redis
+    container_name: hyperf-redis
+    volumes:
+      - hyperf-redis-data:/data
+    ports:
+      - "6379:6379"
+  db:
+    image: mysql:5.7
+    container_name: hyperf-db
+    volumes:
+      - hyperf-db-data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: transfer
+      MYSQL_TCP_PORT: 3330
+    ports:
+      - "3333:3333"
+
+networks:
+  default:
+    name: hyperf-skeleton
