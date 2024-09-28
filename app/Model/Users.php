@@ -8,6 +8,7 @@ namespace App\Model;
  * @property int $document
  * @property string $password
  * @property string $email
+ * @property int $user_type
  */
 class Users extends Model
 {

@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Requests\Transfer;
 
+use App\Enums\UserTypesEnum;
 use App\Model\Users;
+use App\Model\UsersTypes;
 use App\Model\Wallets;
 use App\Requests\BaseRequest;
 use Hyperf\Database\Model\Collection;
@@ -27,8 +29,13 @@ class TransferRequest extends BaseRequest
 
     public function getPayer(): Users|Collection|Model|array
     {
-        //TODO Payee must not be lojista
-        return Users::findOrFail($this->input('payer'));
+        $payer = Users::findOrFail($this->input('payer'));
+
+        if (UsersTypes::findOrFail($payer->user_type)->name === UserTypesEnum::LOJIST->value) {
+            throw new \Exception('Payer must not be lojista');
+        }
+
+        return $payer;
     }
 
     public function getAmount(): int
