@@ -13,10 +13,6 @@ declare(strict_types=1);
 use App\Controller\TransferController;
 use Hyperf\HttpServer\Router\Router;
 
-Router::addRoute(['GET', 'POST', 'HEAD'], '/', 'App\Controller\IndexController@index');
 Router::addGroup('/transfer', function () {
     Router::post('', [TransferController::class, 'transfer']);
-});
-Router::get('/favicon.ico', function () {
-    return '';
 });

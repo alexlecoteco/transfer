@@ -1,6 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Database\Commands\Migrations\FreshCommand;
+
 /**
  * This file is part of Hyperf.
  *
@@ -9,6 +14,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
+use function Hyperf\Coroutine\run;
+
 ini_set('display_errors', 'on');
 ini_set('display_startup_errors', 'on');
 
@@ -27,4 +35,18 @@ Hyperf\Di\ClassLoader::init();
 
 $container = require BASE_PATH . '/config/container.php';
 
-$container->get(Hyperf\Contract\ApplicationInterface::class);
+$config = $container->get(ConfigInterface::class);
+
+$config->set('logger.default', []);
+
+$config->set('databases.default.database', 'testing');
+
+run(fn () => $container->get(Hyperf\Contract\ApplicationInterface::class));
+
+run(function () use ($container) {
+    $container = ApplicationContext::getContainer();
+    $container->get(FreshCommand::class)->run(
+        new Symfony\Component\Console\Input\StringInput(''),
+        new Symfony\Component\Console\Output\ConsoleOutput()
+    );
+});
