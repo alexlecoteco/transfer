@@ -17,6 +17,7 @@ class Users extends Model
         'name',
         'document',
         'password',
-        'email'
+        'email',
+        'user_type'
     ];
 }
