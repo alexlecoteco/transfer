@@ -34,7 +34,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: transfer
-      MYSQL_TCP_PORT: 3330
+      MYSQL_TCP_PORT: 3333
     ports:
       - "3333:3333"
 
