@@ -50,9 +50,9 @@ class TransferRequest extends BaseRequest
             throw new \Exception('Amount must be greater than 0');
         }
 
-        $payeeWallet = Wallets::where('user_id', $this->input('payee'))->firstOrFail();
+        $payeeWallet = Wallets::where('user_id', $this->input('payer'))->firstOrFail();
         if ($payeeWallet->balance < $amount) {
-            throw new \Exception('Payee does not have enough balance');
+            throw new \Exception('Payer does not have enough balance');
         }
 
         return $this->input('amount');

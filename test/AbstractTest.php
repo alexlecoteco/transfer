@@ -19,25 +19,25 @@ use function Hyperf\Support\make;
 
 class AbstractTest extends HttpTestCase
 {
+    public const FIRST_TEST_USER = 'firstTest';
+    public const FIRST_TEST_USER_DOCUMENT = 1234;
+    public const SECOND_TEST_USER_NAME = 'secondTest';
+    public const SECOND_TEST_USER_DOCUMENT = 5678;
+    public const LOJIST_USER = 'lojistTest';
+    public const LOJIST_USER_PASSWORD = 1357;
+    public const FIRST_USER_BALANCE = 100;
+    public const SECOND_USER_BALANCE = 500;
+    public const LOJIST_BALANCE = 1000;
+
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
         $this->mockRequests();
     }
 
-    public function setUp(): void
+    public function testClassTest(): void
     {
-        Schema::disableForeignKeyConstraints();
-        $table = Db::select('SHOW TABLES');
-        foreach ($table as $name) {
-            if ($name = 'migrations') {
-                continue;
-            }
-
-            Db::table($name)->truncate();
-        }
-        Schema::enableForeignKeyConstraints();
-//        $this->createTestingModels();
+        $this->assertTrue(true);
     }
 
     public function mockRequests(): void
@@ -61,7 +61,20 @@ class AbstractTest extends HttpTestCase
         $container->define(TransactionValidator::class, fn () => $secondMockedClass->getMock()->makePartial());
     }
 
-    private function createTestingModels(): void
+    public function freshStart(): void
+    {
+        Schema::disableForeignKeyConstraints();
+        $table = json_decode(json_encode(Db::select('SHOW TABLES')), true);
+        foreach ($table as $name) {
+            $tableName = $name['Tables_in_testing'];
+            if ($tableName !== 'migrations') {
+                Db::table($tableName)->truncate();
+            }
+        }
+        Schema::enableForeignKeyConstraints();
+    }
+
+    protected function createTestingModels(): void
     {
         $userTypeLojist = UsersTypes::create(
             ['name' => UserTypesEnum::LOJIST->value]
@@ -71,9 +84,9 @@ class AbstractTest extends HttpTestCase
         );
         $firstUser = Users::create(
             [
-                'name' => 'firstTest',
-                'email' => 'firstTest@test.com.br',
-                'document' => 1234,
+                'name' => self::FIRST_TEST_USER,
+                'email' => self::FIRST_TEST_USER . '@test.com.br',
+                'document' => self::FIRST_TEST_USER_DOCUMENT,
                 'password' => 'asdf',
                 'user_type' => $userTypeCommon->id
             ]
@@ -81,9 +94,9 @@ class AbstractTest extends HttpTestCase
 
         $secondUser = Users::create(
             [
-                'name' => 'secondTest',
-                'email' => 'secondTest@test.com.br',
-                'document' => 5678,
+                'name' => self::SECOND_TEST_USER_NAME,
+                'email' => self::SECOND_TEST_USER_NAME . 'secondTest@test.com.br',
+                'document' => self::SECOND_TEST_USER_DOCUMENT,
                 'password' => 'asdf',
                 'user_type' => $userTypeCommon->id
             ]
@@ -91,9 +104,9 @@ class AbstractTest extends HttpTestCase
 
         $thirdUser = Users::create(
             [
-                'name' => 'lojistTest',
-                'email' => 'lojistTest@test.com.br',
-                'document' => 1357,
+                'name' => self::LOJIST_USER,
+                'email' => self::LOJIST_USER . '@test.com.br',
+                'document' => self::LOJIST_USER_PASSWORD,
                 'password' => 'asdf',
                 'user_type' => $userTypeLojist->id
             ]
@@ -102,21 +115,21 @@ class AbstractTest extends HttpTestCase
         Wallets::create(
             [
                 'user_id' => $firstUser->id,
-                'balance' => 100
+                'balance' => self::FIRST_USER_BALANCE
             ]
         );
 
         Wallets::create(
             [
                 'user_id' => $secondUser->id,
-                'balance' => 500
+                'balance' => self::SECOND_USER_BALANCE
             ]
         );
 
         Wallets::create(
             [
                 'user_id' => $thirdUser->id,
-                'balance' => 0
+                'balance' => self::LOJIST_BALANCE
             ]
         );
     }

@@ -11,6 +11,6 @@ trait CacheFailuresTrait
     {
         $cache = make(Cache::class);
         $pastFailures = $cache->get($key, 0);
-        $cache->set('failed_notify', $pastFailures + 1, $ttl);
+        $cache->set($key, $pastFailures + 1, $ttl);
     }
 }

@@ -19,7 +19,7 @@ class AbstractClient
         'timeout' => self::TIME_OUT_IN_SECONDS,
         'socket_buffer_size' => 1024 * 1024 * 2
     ];
-    public function getClient(): Client
+    public function getClient()
     {
         $container = ApplicationContext::getContainer();
         $stack = $container->get(HandlerStackFactory::class)->create();
