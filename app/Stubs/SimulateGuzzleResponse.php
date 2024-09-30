@@ -2,11 +2,12 @@
 
 namespace App\Stubs;
 
-use Psr\Http\Message\MessageInterface;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Promise\PromiseInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 
-class SimulateGuzzleResponse implements ResponseInterface
+class SimulateGuzzleResponse implements ClientInterface
 {
     private string $response;
     private array $headers;
@@ -27,68 +28,33 @@ class SimulateGuzzleResponse implements ResponseInterface
         return new SimulateGuzzleStreamResponse($this->response);
     }
 
-    public function getProtocolVersion(): string
-    {
-        // Implement getProtocolVersion() method.
-    }
-
-    public function withProtocolVersion($version): MessageInterface
-    {
-        // Implement withProtocolVersion() method.
-    }
-
-    public function getHeaders(): array
-    {
-        // Implement getHeaders() method.
-    }
-
-    public function hasHeader($name): bool
-    {
-        // Implement hasHeader() method.
-    }
-
     public function getHeader($name): array
     {
         return $this->headers[$name] ?? [];
     }
 
-    public function getHeaderLine($name): string
+    public function send(RequestInterface $request, array $options = []): ResponseInterface
     {
-        // Implement getHeaderLine() method.
+        // TODO: Implement send() method.
     }
 
-    public function withHeader($name, $value): MessageInterface
+    public function sendAsync(RequestInterface $request, array $options = []): PromiseInterface
     {
-        // Implement withHeader() method.
+        // TODO: Implement sendAsync() method.
     }
 
-    public function withAddedHeader($name, $value): MessageInterface
+    public function request(string $method, $uri, array $options = []): ResponseInterface
     {
-        // Implement withAddedHeader() method.
+        // TODO: Implement request() method.
     }
 
-    public function withoutHeader($name): MessageInterface
+    public function requestAsync(string $method, $uri, array $options = []): PromiseInterface
     {
-        // Implement withoutHeader() method.
+        // TODO: Implement requestAsync() method.
     }
 
-    public function withBody(StreamInterface $body): MessageInterface
+    public function getConfig(?string $option = null)
     {
-        // Implement withBody() method.
-    }
-
-    public function getStatusCode(): int
-    {
-        // Implement getStatusCode() method.
-    }
-
-    public function withStatus($code, $reasonPhrase = ''): ResponseInterface
-    {
-        // Implement withStatus() method.
-    }
-
-    public function getReasonPhrase(): string
-    {
-        // Implement getReasonPhrase() method.
+        // TODO: Implement getConfig() method.
     }
 }

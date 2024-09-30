@@ -3,6 +3,7 @@
 namespace App\ExternalServices;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use Hyperf\Cache\Cache;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Guzzle\HandlerStackFactory;
@@ -19,7 +20,7 @@ class AbstractClient
         'timeout' => self::TIME_OUT_IN_SECONDS,
         'socket_buffer_size' => 1024 * 1024 * 2
     ];
-    public function getClient()
+    public function getClient(): ClientInterface
     {
         $container = ApplicationContext::getContainer();
         $stack = $container->get(HandlerStackFactory::class)->create();
