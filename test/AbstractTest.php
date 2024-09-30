@@ -28,7 +28,6 @@ class AbstractTest extends HttpTestCase
     public const FIRST_USER_BALANCE = 100;
     public const SECOND_USER_BALANCE = 500;
     public const LOJIST_BALANCE = 1000;
-    const TEST_MAIL = '@test.com.br';
 
     public function __construct($name = null, array $data = [], $dataName = '')
     {
@@ -90,7 +89,7 @@ class AbstractTest extends HttpTestCase
 
         $firstUser = $userEloquentRepository->createUser(
                 self::FIRST_TEST_USER,
-                self::FIRST_TEST_USER . self::TEST_MAIL,
+                self::FIRST_TEST_USER . '@test.com.br',
                 self::FIRST_TEST_USER_DOCUMENT,
                 'asdf',
                 $userTypeCommon->id
@@ -98,7 +97,7 @@ class AbstractTest extends HttpTestCase
 
         $secondUser = $userEloquentRepository->createUser(
                 self::SECOND_TEST_USER_NAME,
-                self::SECOND_TEST_USER_NAME . self::TEST_MAIL,
+                self::SECOND_TEST_USER_NAME . 'secondTest@test.com.br',
                 self::SECOND_TEST_USER_DOCUMENT,
                 'asdf',
                 $userTypeCommon->id
@@ -106,7 +105,7 @@ class AbstractTest extends HttpTestCase
 
         $thirdUser = $userEloquentRepository->createUser(
                 self::LOJIST_USER,
-                self::LOJIST_USER . self::TEST_MAIL,
+                self::LOJIST_USER . '@test.com.br',
                 self::LOJIST_USER_PASSWORD,
                 'asdf',
                 $userTypeLojist->id
