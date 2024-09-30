@@ -97,7 +97,7 @@ class AbstractTest extends HttpTestCase
 
         $secondUser = $userEloquentRepository->createUser(
                 self::SECOND_TEST_USER_NAME,
-                self::SECOND_TEST_USER_NAME . 'secondTest@test.com.br',
+                self::SECOND_TEST_USER_NAME . '@test.com.br',
                 self::SECOND_TEST_USER_DOCUMENT,
                 'asdf',
                 $userTypeCommon->id
