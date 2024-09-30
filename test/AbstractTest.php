@@ -6,9 +6,9 @@ namespace HyperfTest;
 use App\Enums\UserTypesEnum;
 use App\ExternalServices\TransactionNotificator\TransactionNotificator;
 use App\ExternalServices\TransactionValidator\TransactionValidator;
-use App\Model\Users;
-use App\Model\UserTypes;
-use App\Model\Wallets;
+use App\Repositories\Users\UsersEloquentRepository;
+use App\Repositories\UserTypes\UserTypesEloquentRepository;
+use App\Repositories\Wallets\WalletsEloquentRepository;
 use App\Stubs\TransactionNotificator\TransactionNotificatorRequestStub;
 use App\Stubs\TransactionValidator\TransactionValidatorRequestStub;
 use Hyperf\Context\ApplicationContext;
@@ -76,61 +76,54 @@ class AbstractTest extends HttpTestCase
 
     protected function createTestingModels(): void
     {
-        $userTypeLojist = UserTypes::create(
-            ['name' => UserTypesEnum::LOJIST->value]
+        $userEloquentRepository = UsersEloquentRepository::instantiate();
+        $walletsEloquentRepository = WalletsEloquentRepository::instantiate();
+        $userTypeEloquentRepository = UserTypesEloquentRepository::instantiate();
+
+        $userTypeLojist = $userTypeEloquentRepository->createUserType(
+            UserTypesEnum::LOJIST->value
         );
-        $userTypeCommon = UserTypes::create(
-            ['name' => UserTypesEnum::COMMON->value]
-        );
-        $firstUser = Users::create(
-            [
-                'name' => self::FIRST_TEST_USER,
-                'email' => self::FIRST_TEST_USER . '@test.com.br',
-                'document' => self::FIRST_TEST_USER_DOCUMENT,
-                'password' => 'asdf',
-                'user_type' => $userTypeCommon->id
-            ]
+        $userTypeCommon = $userTypeEloquentRepository->createUserType(
+            UserTypesEnum::COMMON->value
         );
 
-        $secondUser = Users::create(
-            [
-                'name' => self::SECOND_TEST_USER_NAME,
-                'email' => self::SECOND_TEST_USER_NAME . 'secondTest@test.com.br',
-                'document' => self::SECOND_TEST_USER_DOCUMENT,
-                'password' => 'asdf',
-                'user_type' => $userTypeCommon->id
-            ]
+        $firstUser = $userEloquentRepository->createUser(
+                self::FIRST_TEST_USER,
+                self::FIRST_TEST_USER . '@test.com.br',
+                self::FIRST_TEST_USER_DOCUMENT,
+                'asdf',
+                $userTypeCommon->id
         );
 
-        $thirdUser = Users::create(
-            [
-                'name' => self::LOJIST_USER,
-                'email' => self::LOJIST_USER . '@test.com.br',
-                'document' => self::LOJIST_USER_PASSWORD,
-                'password' => 'asdf',
-                'user_type' => $userTypeLojist->id
-            ]
+        $secondUser = $userEloquentRepository->createUser(
+                self::SECOND_TEST_USER_NAME,
+                self::SECOND_TEST_USER_NAME . 'secondTest@test.com.br',
+                self::SECOND_TEST_USER_DOCUMENT,
+                'asdf',
+                $userTypeCommon->id
         );
 
-        Wallets::create(
-            [
-                'user_id' => $firstUser->id,
-                'balance' => self::FIRST_USER_BALANCE
-            ]
+        $thirdUser = $userEloquentRepository->createUser(
+                self::LOJIST_USER,
+                self::LOJIST_USER . '@test.com.br',
+                self::LOJIST_USER_PASSWORD,
+                'asdf',
+                $userTypeLojist->id
         );
 
-        Wallets::create(
-            [
-                'user_id' => $secondUser->id,
-                'balance' => self::SECOND_USER_BALANCE
-            ]
+        $walletsEloquentRepository->createWallet(
+                $firstUser->id,
+                self::FIRST_USER_BALANCE
         );
 
-        Wallets::create(
-            [
-                'user_id' => $thirdUser->id,
-                'balance' => self::LOJIST_BALANCE
-            ]
+        $walletsEloquentRepository->createWallet(
+                $secondUser->id,
+                self::SECOND_USER_BALANCE
+        );
+
+        $walletsEloquentRepository->createWallet(
+                $thirdUser->id,
+                self::LOJIST_BALANCE
         );
     }
 }

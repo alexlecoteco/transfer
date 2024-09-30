@@ -4,7 +4,7 @@ namespace HyperfTest\Cases;
 
 use App\ExternalServices\TransactionNotificator\TransactionNotificator;
 use App\ExternalServices\TransactionValidator\TransactionValidator;
-use App\Model\Wallets;
+use App\Repositories\Wallets\WalletsEloquentRepository;
 use App\Resources\Transfer\ExecuteTransferResource;
 use App\Stubs\TransactionNotificator\TransactionNotificatorServiceStub;
 use App\Stubs\TransactionValidator\TransactionValidatorServiceStub;
@@ -39,6 +39,8 @@ class TransferTest extends AbstractTest
         $lojistUser = 3;
         $amount = 500;
 
+        $walletsEloquentRepository = WalletsEloquentRepository::instantiate();
+
         $response = $this->post(self::TRANSFER_URI, []);
 
         $this->expectFieldRuleTest($response, 'payer', 'required', null);
@@ -49,9 +51,9 @@ class TransferTest extends AbstractTest
         $thirdResponse = $this->post(self::TRANSFER_URI, $this->makeTransferRequest($secondUser,$secondUser,$amount * 2));
         $fourthResponse = $this->post(self::TRANSFER_URI, $this->makeTransferRequest($lojistUser, $firstUser, $amount));
 
-        $firstUserWallet = Wallets::where('user_id', $firstUser)->first();
-        $secondUserWallet = Wallets::where('user_id', $secondUser)->first();
-        $lojistUserWallet = Wallets::where('user_id', $lojistUser)->first();
+        $firstUserWallet = $walletsEloquentRepository->findWalletByUserId($firstUser);
+        $secondUserWallet = $walletsEloquentRepository->findWalletByUserId($secondUser);
+        $lojistUserWallet = $walletsEloquentRepository->findWalletByUserId($lojistUser);
 
         $this->assertEquals(self::FIRST_USER_BALANCE, $firstUserWallet->balance);
         $this->assertEquals(self::SECOND_USER_BALANCE, $secondUserWallet->balance);
@@ -69,12 +71,14 @@ class TransferTest extends AbstractTest
         $secondUserId = 2;
         $lojistUserId = 3;
 
+        $walletsEloquentRepository = WalletsEloquentRepository::instantiate();
+
         $response = $this->post(self::TRANSFER_URI,
             $this->makeTransferRequest($firstUserId,$secondUserId,$amount)
         );
 
-        $firstUserWaller = Wallets::where('user_id', $firstUserId)->first();
-        $secondUserWallet = Wallets::where('user_id', $secondUserId)->first();
+        $firstUserWaller = $walletsEloquentRepository->findWalletByUserId($firstUserId);
+        $secondUserWallet = $walletsEloquentRepository->findWalletByUserId($secondUserId);
 
         $this->assertEquals($firstUserWaller->balance, self::FIRST_USER_BALANCE - $amount);
         $this->assertEquals($secondUserWallet->balance, self::SECOND_USER_BALANCE + $amount);
@@ -88,7 +92,7 @@ class TransferTest extends AbstractTest
         );
 
         $secondUserWallet->refresh();
-        $lojistWallet = Wallets::where('user_id', $lojistUserId)->first();
+        $lojistWallet = $walletsEloquentRepository->findWalletByUserId($lojistUserId);
 
         $this->assertEquals($lojistWallet->balance, self::LOJIST_BALANCE + $amount);
         $this->assertEquals($secondUserWallet->balance, self::SECOND_USER_BALANCE);
@@ -110,11 +114,13 @@ class TransferTest extends AbstractTest
         $lojistUser = 3;
         $amount = 50;
 
+        $walletsEloquentRepository = WalletsEloquentRepository::instantiate();
+
         $this->post(self::TRANSFER_URI, $this->makeTransferRequest($firstUser,$secondUser, $amount));
 
-        $firstUserWallet = Wallets::where('user_id', $firstUser)->first();
-        $secondUserWallet = Wallets::where('user_id', $secondUser)->first();
-        $lojistUserWallet = Wallets::where('user_id', $lojistUser)->first();
+        $firstUserWallet = $walletsEloquentRepository->findWalletByUserId($firstUser);
+        $secondUserWallet = $walletsEloquentRepository->findWalletByUserId($secondUser);
+        $lojistUserWallet = $walletsEloquentRepository->findWalletByUserId($lojistUser);
 
         $this->assertEquals(self::FIRST_USER_BALANCE, $firstUserWallet->balance);
         $this->assertEquals(self::SECOND_USER_BALANCE, $secondUserWallet->balance);

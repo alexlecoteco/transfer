@@ -5,8 +5,9 @@ namespace App\Requests\Transfer;
 
 use App\Enums\UserTypesEnum;
 use App\Model\Users;
-use App\Model\UserTypes;
-use App\Model\Wallets;
+use App\Repositories\Users\UsersEloquentRepository;
+use App\Repositories\UserTypes\UserTypesEloquentRepository;
+use App\Repositories\Wallets\WalletsEloquentRepository;
 use App\Requests\BaseRequest;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
@@ -24,14 +25,17 @@ class TransferRequest extends BaseRequest
 
     public function getPayee(): Users|Collection|Model|array
     {
-        return Users::findOrFail($this->input('payee'));
+        return UsersEloquentRepository::instantiate()->findUserOrFail($this->input('payee'));
     }
 
     public function getPayer(): Users|Collection|Model|array
     {
-        $payer = Users::findOrFail($this->input('payer'));
+        $payer = UsersEloquentRepository::instantiate()->findUserOrFail($this->input('payer'));
 
-        if (UserTypes::findOrFail($payer->user_type)->name === UserTypesEnum::LOJIST->value) {
+        $userType = UserTypesEloquentRepository::instantiate()
+            ->findUserTypeOrFail($payer->user_type);
+
+        if ($userType->name === UserTypesEnum::LOJIST->value) {
             throw new \Exception('Payer must not be lojista');
         }
 
@@ -50,7 +54,7 @@ class TransferRequest extends BaseRequest
             throw new \Exception('Amount must be greater than 0');
         }
 
-        $payeeWallet = Wallets::where('user_id', $this->input('payer'))->firstOrFail();
+        $payeeWallet = WalletsEloquentRepository::instantiate()->findWalletByUserId($this->input('payer'));
         if ($payeeWallet->balance < $amount) {
             throw new \Exception('Payer does not have enough balance');
         }
