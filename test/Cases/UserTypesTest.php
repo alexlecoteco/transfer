@@ -3,7 +3,7 @@
 namespace HyperfTest\Cases;
 
 use App\Enums\UserTypesEnum;
-use App\Model\UsersTypes;
+use App\Model\UserTypes;
 use HyperfTest\AbstractTest;
 
 class UserTypesTest extends AbstractTest
@@ -17,7 +17,7 @@ class UserTypesTest extends AbstractTest
 
     public function testInvalidateUserTypeWithSameName(): void
     {
-        $failedInsertion = UsersTypes::insertOrIgnore(
+        $failedInsertion = UserTypes::insertOrIgnore(
             ['name' => UserTypesEnum::COMMON->value]
         );
 

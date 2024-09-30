@@ -7,7 +7,7 @@ use App\Enums\UserTypesEnum;
 use App\ExternalServices\TransactionNotificator\TransactionNotificator;
 use App\ExternalServices\TransactionValidator\TransactionValidator;
 use App\Model\Users;
-use App\Model\UsersTypes;
+use App\Model\UserTypes;
 use App\Model\Wallets;
 use App\Stubs\TransactionNotificator\TransactionNotificatorRequestStub;
 use App\Stubs\TransactionValidator\TransactionValidatorRequestStub;
@@ -76,10 +76,10 @@ class AbstractTest extends HttpTestCase
 
     protected function createTestingModels(): void
     {
-        $userTypeLojist = UsersTypes::create(
+        $userTypeLojist = UserTypes::create(
             ['name' => UserTypesEnum::LOJIST->value]
         );
-        $userTypeCommon = UsersTypes::create(
+        $userTypeCommon = UserTypes::create(
             ['name' => UserTypesEnum::COMMON->value]
         );
         $firstUser = Users::create(
